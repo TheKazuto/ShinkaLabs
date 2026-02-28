@@ -132,15 +132,36 @@
       mix-blend-mode: multiply;
     }
 
-    @media (max-width: 540px) {
+    @media (max-width: 600px) {
       body { cursor: auto; }
       #cur { display: none; }
-      .wordmark { font-size: clamp(1.8rem, 10vw, 2.6rem); }
+
+      /* Scale wordmark to always fit screen width.
+         "SHINKA LABS" with letter-spacing 0.55em ≈ 13 chars × spacing.
+         Using font-size ~5.8vw makes it fit at ~360px screens.
+         Max capped so it doesn't get too large on tablets. */
+      .wordmark {
+        font-size: clamp(1.4rem, 7.2vw, 2.4rem);
+        letter-spacing: 0.35em;   /* tighter on mobile so it fits */
+        white-space: nowrap;
+        max-width: 96vw;
+      }
+
       .tagline {
         white-space: normal !important;
         width: auto !important;
-        font-size: clamp(0.85rem, 3.5vw, 1rem) !important;
-        max-width: 88vw; text-align: center;
+        font-size: clamp(0.8rem, 3.8vw, 1rem) !important;
+        max-width: 88vw;
+        text-align: center;
+        margin-left: 0 !important;
+      }
+    }
+
+    /* Extra small screens (≤360px) */
+    @media (max-width: 360px) {
+      .wordmark {
+        font-size: clamp(1.1rem, 6.5vw, 1.4rem);
+        letter-spacing: 0.25em;
       }
     }
   </style>
@@ -371,7 +392,12 @@
     tg.style.width = '';
     tg.style.whiteSpace = 'nowrap';
 
-    if (window.innerWidth <= 540) return;
+    if (window.innerWidth <= 600) {
+      // Mobile: clear all JS overrides, let CSS handle everything
+      tg.style.whiteSpace = 'normal';
+      tg.style.width = 'auto';
+      return;
+    }
 
     // ── Step 1: fix wordmark centering ──
     // letter-spacing adds trailing space = 1 letter-spacing unit
